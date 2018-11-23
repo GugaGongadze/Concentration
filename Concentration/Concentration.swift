@@ -11,35 +11,52 @@ import Foundation
 class Concentration {
     
     var cards = [Card]()
-    
     var indexOfOneAndOnlyFaceUpCard: Int?
-    
     var alreadyFlippedCardIdentifiers: [Int] = []
-    
     var gameScore = 0
     
     func chooseCard(at index: Int) {
+        let currentCardIdentifier = cards[index].indentifier
+        
         if !cards[index].isMatched {
             if let matchIndex = indexOfOneAndOnlyFaceUpCard, matchIndex != index {
+                // one card is face up
+                
+                let oneAndOnlyFaceUpCardIdentifier = cards[matchIndex].indentifier
                 
                 // Check if cards match
-                if cards[matchIndex].indentifier == cards[index].indentifier  {
+                if oneAndOnlyFaceUpCardIdentifier == currentCardIdentifier  {
                     gameScore += 2
-                    if let index = alreadyFlippedCardIdentifiers.index(of: cards[index].indentifier) {
+                    if let index = alreadyFlippedCardIdentifiers.index(of: currentCardIdentifier) {
                         alreadyFlippedCardIdentifiers.remove(at: index)
                     }
                     
                     cards[matchIndex].isMatched = true
                     cards[index].isMatched = true
+                } else {
+                    
+                    if alreadyFlippedCardIdentifiers.contains(currentCardIdentifier) {
+                        gameScore -= 1
+                    } else {
+                        alreadyFlippedCardIdentifiers.append(currentCardIdentifier)
+                    }
+                    
+                    if alreadyFlippedCardIdentifiers.contains(oneAndOnlyFaceUpCardIdentifier) {
+                        gameScore -= 1
+                    } else {
+                        alreadyFlippedCardIdentifiers.append(oneAndOnlyFaceUpCardIdentifier)
+                    }
+                    
                 }
                 
                 cards[index].isFaceUp = true
                 indexOfOneAndOnlyFaceUpCard = nil
+
             } else {
-                // either no cards or 2 card are face up
                 for flipDownIndex in cards.indices {
                     cards[flipDownIndex].isFaceUp = false
                 }
+                
                 cards[index].isFaceUp = true
                 indexOfOneAndOnlyFaceUpCard = index
             }

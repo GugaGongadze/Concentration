@@ -42,6 +42,7 @@ class ViewController: UIViewController {
     @IBAction func restartGame(_ sender: UIButton) {
         flipCount = 0
         game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+        game.gameScore = 0
         currentGameTheme = gameThemes.randomElement()?.value
         updateViewFromModel()
     }
