@@ -14,12 +14,21 @@ class Concentration {
     
     var indexOfOneAndOnlyFaceUpCard: Int?
     
+    var alreadyFlippedCardIdentifiers: [Int] = []
+    
+    var gameScore = 0
+    
     func chooseCard(at index: Int) {
         if !cards[index].isMatched {
             if let matchIndex = indexOfOneAndOnlyFaceUpCard, matchIndex != index {
                 
                 // Check if cards match
                 if cards[matchIndex].indentifier == cards[index].indentifier  {
+                    gameScore += 2
+                    if let index = alreadyFlippedCardIdentifiers.index(of: cards[index].indentifier) {
+                        alreadyFlippedCardIdentifiers.remove(at: index)
+                    }
+                    
                     cards[matchIndex].isMatched = true
                     cards[index].isMatched = true
                 }
