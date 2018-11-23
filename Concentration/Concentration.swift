@@ -10,11 +10,34 @@ import Foundation
 
 class Concentration {
     
-    var cards = [Card]()
-    var indexOfOneAndOnlyFaceUpCard: Int?
-    var alreadyFlippedCardIdentifiers: [Int] = []
-    var gameScore = 0
-    let themes = [
+    private(set) var cards = [Card]()
+    private var indexOfOneAndOnlyFaceUpCard: Int? {
+        get {
+            var foundIndex: Int?
+            for index in cards.indices {
+                if cards[index].isFaceUp {
+                    if foundIndex == nil {
+                        foundIndex = index
+                    } else {
+                        return nil
+                    }
+                }
+            }
+            
+            return foundIndex
+        }
+        
+        set {
+            for index in cards.indices {
+                cards[index].isFaceUp = (index == newValue)
+            }
+        }
+    }
+    
+    private var alreadyFlippedCardIdentifiers: [Int] = []
+    private(set) var gameScore = 0
+    
+    private let themes = [
         "animals": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯"],
         "sports": ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🎱", "🏓", "⛸", "🥌", "🛹"],
         "objects": ["⌚️", "📱", "💻", "🖥", "⏰", "💡", "🔋", "⌛️", "☎️", "💎"],
@@ -22,10 +45,13 @@ class Concentration {
         "travel": ["🚗", "🚕", "🚎", "🚃", "✈️", "🛴", "🏰", "🏔", "🚠", "🚀"],
         "flags": ["🇬🇪", "🇩🇪", "🇫🇮", "🇨🇮", "🇳🇮", "🇵🇱", "🇵🇹", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇸🇪", "🇰🇷"],
     ]
-    var flipCount = 0
+    
+    private(set) var flipCount = 0
     lazy var gameTheme = themes.randomElement()?.value
     
     func chooseCard(at index: Int) {
+        assert(cards.indices.contains(index), "Concentration.chooseCard(at: \(index)): Chosen index is out of range")
+        
         flipCount += 1
         let currentCardIdentifier = cards[index].indentifier
         
@@ -59,20 +85,16 @@ class Concentration {
                 }
                 
                 cards[index].isFaceUp = true
-                indexOfOneAndOnlyFaceUpCard = nil
 
             } else {
-                for flipDownIndex in cards.indices {
-                    cards[flipDownIndex].isFaceUp = false
-                }
-                
-                cards[index].isFaceUp = true
                 indexOfOneAndOnlyFaceUpCard = index
             }
         }
     }
     
     init(numberOfPairsOfCards: Int) {
+        assert(numberOfPairsOfCards > 0, "init(\(numberOfPairsOfCards)): You must have at least one pair of cards")
+        
         for _ in 0..<numberOfPairsOfCards {
             let card = Card()
             cards += [card, card]
