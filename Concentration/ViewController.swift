@@ -9,41 +9,21 @@
 import UIKit
 
 class ViewController: UIViewController {
-    
-    let gameThemes = [
-        "animals": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯"],
-        "sports": ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🎱", "🏓", "⛸", "🥌", "🛹"],
-        "objects": ["⌚️", "📱", "💻", "🖥", "⏰", "💡", "🔋", "⌛️", "☎️", "💎"],
-        "food": ["🍎", "🍐", "🍇", "🍌", "🍓", "🍒", "🍆", "🍗", "🥨", "🌽"],
-        "travel": ["🚗", "🚕", "🚎", "🚃", "✈️", "🛴", "🏰", "🏔", "🚠", "🚀"],
-        "flags": ["🇬🇪", "🇩🇪", "🇫🇮", "🇨🇮", "🇳🇮", "🇵🇱", "🇵🇹", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇸🇪", "🇰🇷"],
-    ]
     lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
-    lazy var currentGameTheme = gameThemes.randomElement()?.value
-    
-    var flipCount = 0 {
-        didSet {
-            flipCountLabel.text = "Flips: \(flipCount)"
-        }
-    }
     
     @IBOutlet weak var flipCountLabel: UILabel!
     @IBOutlet weak var scoreLabel: UILabel!
     @IBOutlet var cardButtons: [UIButton]!
     
     @IBAction func touchCard(_ sender: UIButton) {
-        flipCount += 1
         if let cardNumber = cardButtons.index(of: sender) {
             game.chooseCard(at: cardNumber)
             updateViewFromModel()
         }
     }
-    
+
     @IBAction func restartGame(_ sender: UIButton) {
-        flipCount = 0
         game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
-        game.gameScore = 0
-        currentGameTheme = gameThemes.randomElement()?.value
         updateViewFromModel()
     }
     
@@ -62,15 +42,16 @@ class ViewController: UIViewController {
         }
         
         scoreLabel.text = "Score: \(String(game.gameScore))"
+        flipCountLabel.text = "Flips: \(game.flipCount)"
     }
     
     var emoji = [Int:String]()
     
     func emoji(for card: Card) -> String {
         
-        if emoji[card.indentifier] == nil, currentGameTheme!.count > 0 {
-            let randomIndex = Int.random(in: 0 ..< currentGameTheme!.count)
-            emoji[card.indentifier] = currentGameTheme?.remove(at: randomIndex)
+        if emoji[card.indentifier] == nil, game.gameTheme!.count > 0 {
+            let randomIndex = Int.random(in: 0 ..< game.gameTheme!.count)
+            emoji[card.indentifier] = game.gameTheme?.remove(at: randomIndex)
         }
         
         return emoji[card.indentifier] ?? "?"

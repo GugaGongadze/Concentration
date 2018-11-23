@@ -14,8 +14,19 @@ class Concentration {
     var indexOfOneAndOnlyFaceUpCard: Int?
     var alreadyFlippedCardIdentifiers: [Int] = []
     var gameScore = 0
+    let themes = [
+        "animals": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯"],
+        "sports": ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🎱", "🏓", "⛸", "🥌", "🛹"],
+        "objects": ["⌚️", "📱", "💻", "🖥", "⏰", "💡", "🔋", "⌛️", "☎️", "💎"],
+        "food": ["🍎", "🍐", "🍇", "🍌", "🍓", "🍒", "🍆", "🍗", "🥨", "🌽"],
+        "travel": ["🚗", "🚕", "🚎", "🚃", "✈️", "🛴", "🏰", "🏔", "🚠", "🚀"],
+        "flags": ["🇬🇪", "🇩🇪", "🇫🇮", "🇨🇮", "🇳🇮", "🇵🇱", "🇵🇹", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇸🇪", "🇰🇷"],
+    ]
+    var flipCount = 0
+    lazy var gameTheme = themes.randomElement()?.value
     
     func chooseCard(at index: Int) {
+        flipCount += 1
         let currentCardIdentifier = cards[index].indentifier
         
         if !cards[index].isMatched {
@@ -33,8 +44,7 @@ class Concentration {
                     
                     cards[matchIndex].isMatched = true
                     cards[index].isMatched = true
-                } else {
-                    
+                } else {                    
                     if alreadyFlippedCardIdentifiers.contains(currentCardIdentifier) {
                         gameScore -= 1
                     } else {
@@ -46,7 +56,6 @@ class Concentration {
                     } else {
                         alreadyFlippedCardIdentifiers.append(oneAndOnlyFaceUpCardIdentifier)
                     }
-                    
                 }
                 
                 cards[index].isFaceUp = true
