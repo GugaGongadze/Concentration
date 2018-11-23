@@ -10,7 +10,16 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    let gameThemes = [
+        "animals": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯"],
+        "sports": ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🎱", "🏓", "⛸", "🥌", "🛹"],
+        "objects": ["⌚️", "📱", "💻", "🖥", "⏰", "💡", "🔋", "⌛️", "☎️", "💎"],
+        "food": ["🍎", "🍐", "🍇", "🍌", "🍓", "🍒", "🍆", "🍗", "🥨", "🌽"],
+        "travel": ["🚗", "🚕", "🚎", "🚃", "✈️", "🛴", "🏰", "🏔", "🚠", "🚀"],
+        "flags": ["🇬🇪", "🇩🇪", "🇫🇮", "🇨🇮", "🇳🇮", "🇵🇱", "🇵🇹", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🇸🇪", "🇰🇷"],
+    ]
     lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+    lazy var currentGameTheme = gameThemes.randomElement()?.value
     
     var flipCount = 0 {
         didSet {
@@ -32,6 +41,7 @@ class ViewController: UIViewController {
     @IBAction func restartGame(_ sender: UIButton) {
         flipCount = 0
         game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+        currentGameTheme = gameThemes.randomElement()?.value
         updateViewFromModel()
     }
     
@@ -55,9 +65,10 @@ class ViewController: UIViewController {
     var emoji = [Int:String]()
     
     func emoji(for card: Card) -> String {
-        if emoji[card.indentifier] == nil, emojiChoices.count > 0 {
-            let randomIndex = Int.random(in: 0 ..< emojiChoices.count)
-            emoji[card.indentifier] = emojiChoices.remove(at: randomIndex)
+        
+        if emoji[card.indentifier] == nil, currentGameTheme!.count > 0 {
+            let randomIndex = Int.random(in: 0 ..< currentGameTheme!.count)
+            emoji[card.indentifier] = currentGameTheme?.remove(at: randomIndex)
         }
         
         return emoji[card.indentifier] ?? "?"
